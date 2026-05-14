@@ -1,0 +1,583 @@
+{
+  "armSummary": {
+    "framesChecked": 82,
+    "greenAvgInsideTorso": 16.488,
+    "magentaAvgInsideTorso": 4.988,
+    "greenAvgDxFromTorso": -2.901,
+    "magentaAvgDxFromTorso": 3.165,
+    "interpretation": "green reads as the back/far arm in the native right-facing rig; magenta reads as the front/near/action arm. In idle this is visually obvious. In weapon and attack sheets, some magenta-family colors are contextual weapon pixels, so combat object colors must be split into weapon and smear/effect roles before rendering."
+  },
+  "roles": [
+    {
+      "role": "arm_back",
+      "colors": [
+        {
+          "hex": "#6abe30",
+          "pixels": 1226
+        },
+        {
+          "hex": "#99e550",
+          "pixels": 464
+        }
+      ]
+    },
+    {
+      "role": "hand_back",
+      "colors": [
+        {
+          "hex": "#6abe30",
+          "pixels": 615
+        },
+        {
+          "hex": "#99e550",
+          "pixels": 472
+        }
+      ]
+    },
+    {
+      "role": "arm_front",
+      "colors": [
+        {
+          "hex": "#951799",
+          "pixels": 605
+        },
+        {
+          "hex": "#f065c4",
+          "pixels": 513
+        },
+        {
+          "hex": "#fb8aff",
+          "pixels": 182
+        },
+        {
+          "hex": "#af1ab2",
+          "pixels": 147
+        }
+      ]
+    },
+    {
+      "role": "hand_front",
+      "colors": [
+        {
+          "hex": "#af1ab2",
+          "pixels": 315
+        },
+        {
+          "hex": "#951799",
+          "pixels": 283
+        },
+        {
+          "hex": "#f065c4",
+          "pixels": 268
+        },
+        {
+          "hex": "#fb8aff",
+          "pixels": 85
+        }
+      ]
+    },
+    {
+      "role": "leg_front",
+      "colors": [
+        {
+          "hex": "#d1cc60",
+          "pixels": 1757
+        },
+        {
+          "hex": "#fbf236",
+          "pixels": 545
+        }
+      ]
+    },
+    {
+      "role": "foot_front",
+      "colors": [
+        {
+          "hex": "#fbf236",
+          "pixels": 1161
+        },
+        {
+          "hex": "#d1cc60",
+          "pixels": 117
+        }
+      ]
+    },
+    {
+      "role": "leg_back",
+      "colors": [
+        {
+          "hex": "#ce5050",
+          "pixels": 852
+        },
+        {
+          "hex": "#d95763",
+          "pixels": 633
+        },
+        {
+          "hex": "#ac3232",
+          "pixels": 266
+        }
+      ]
+    },
+    {
+      "role": "foot_back",
+      "colors": [
+        {
+          "hex": "#ac3232",
+          "pixels": 817
+        },
+        {
+          "hex": "#d95763",
+          "pixels": 136
+        },
+        {
+          "hex": "#ce5050",
+          "pixels": 61
+        }
+      ]
+    },
+    {
+      "role": "head",
+      "colors": [
+        {
+          "hex": "#5fcde4",
+          "pixels": 4194
+        }
+      ]
+    },
+    {
+      "role": "torso",
+      "colors": [
+        {
+          "hex": "#df7126",
+          "pixels": 1922
+        },
+        {
+          "hex": "#b35b20",
+          "pixels": 1069
+        },
+        {
+          "hex": "#c46423",
+          "pixels": 790
+        }
+      ]
+    },
+    {
+      "role": "shadow",
+      "colors": []
+    },
+    {
+      "role": "weapon",
+      "colors": [
+        {
+          "hex": "#f065c4",
+          "pixels": 1216
+        },
+        {
+          "hex": "#a3608f",
+          "pixels": 744
+        },
+        {
+          "hex": "#fb8aff",
+          "pixels": 702
+        },
+        {
+          "hex": "#847e87",
+          "pixels": 390
+        },
+        {
+          "hex": "#76428a",
+          "pixels": 389
+        },
+        {
+          "hex": "#674085",
+          "pixels": 179
+        },
+        {
+          "hex": "#bf6fa7",
+          "pixels": 93
+        },
+        {
+          "hex": "#643875",
+          "pixels": 57
+        }
+      ]
+    },
+    {
+      "role": "smear",
+      "colors": [
+        {
+          "hex": "#d77bba",
+          "pixels": 3145
+        },
+        {
+          "hex": "#f092d4",
+          "pixels": 2846
+        },
+        {
+          "hex": "#f7a3e0",
+          "pixels": 818
+        },
+        {
+          "hex": "#f9abff",
+          "pixels": 331
+        },
+        {
+          "hex": "#fdd9ff",
+          "pixels": 251
+        },
+        {
+          "hex": "#dbe3cf",
+          "pixels": 181
+        },
+        {
+          "hex": "#f098f5",
+          "pixels": 173
+        },
+        {
+          "hex": "#cdd4c3",
+          "pixels": 127
+        }
+      ]
+    }
+  ],
+  "armFrameEvidenceSample": [
+    {
+      "sheet": "showcase/resources/Idle/Player Idle 48x48.png",
+      "frame": 0,
+      "green": {
+        "insideTorso": 7,
+        "dx": -5.580459770114945,
+        "cx": 17.586206896551722
+      },
+      "magenta": {
+        "insideTorso": 5,
+        "dx": 5.388888888888889,
+        "cx": 28.555555555555557
+      }
+    },
+    {
+      "sheet": "showcase/resources/Idle/Player Idle 48x48.png",
+      "frame": 1,
+      "green": {
+        "insideTorso": 9,
+        "dx": -5.4434482758620675,
+        "cx": 17.896551724137932
+      },
+      "magenta": {
+        "insideTorso": 2,
+        "dx": 6.189411764705884,
+        "cx": 29.529411764705884
+      }
+    },
+    {
+      "sheet": "showcase/resources/Idle/Player Idle 48x48.png",
+      "frame": 2,
+      "green": {
+        "insideTorso": 11,
+        "dx": -5.321448783248442,
+        "cx": 18.06451612903226
+      },
+      "magenta": {
+        "insideTorso": 3,
+        "dx": 5.929824561403507,
+        "cx": 29.31578947368421
+      }
+    },
+    {
+      "sheet": "showcase/resources/Idle/Player Idle 48x48.png",
+      "frame": 3,
+      "green": {
+        "insideTorso": 11,
+        "dx": -5.366518353726359,
+        "cx": 18.06451612903226
+      },
+      "magenta": {
+        "insideTorso": 3,
+        "dx": 5.88475499092559,
+        "cx": 29.31578947368421
+      }
+    },
+    {
+      "sheet": "showcase/resources/Idle/Player Idle 48x48.png",
+      "frame": 4,
+      "green": {
+        "insideTorso": 11,
+        "dx": -5.366518353726359,
+        "cx": 18.06451612903226
+      },
+      "magenta": {
+        "insideTorso": 3,
+        "dx": 5.88475499092559,
+        "cx": 29.31578947368421
+      }
+    },
+    {
+      "sheet": "showcase/resources/Idle/Player Idle 48x48.png",
+      "frame": 5,
+      "green": {
+        "insideTorso": 9,
+        "dx": -5.495605138607164,
+        "cx": 17.896551724137932
+      },
+      "magenta": {
+        "insideTorso": 2,
+        "dx": 6.137254901960787,
+        "cx": 29.529411764705884
+      }
+    },
+    {
+      "sheet": "showcase/resources/Idle/Player Idle 48x48.png",
+      "frame": 6,
+      "green": {
+        "insideTorso": 7,
+        "dx": -5.580459770114945,
+        "cx": 17.586206896551722
+      },
+      "magenta": {
+        "insideTorso": 5,
+        "dx": 5.388888888888889,
+        "cx": 28.555555555555557
+      }
+    },
+    {
+      "sheet": "showcase/resources/Idle/Player Idle 48x48.png",
+      "frame": 7,
+      "green": {
+        "insideTorso": 7,
+        "dx": -5.600000000000001,
+        "cx": 17.566666666666666
+      },
+      "magenta": {
+        "insideTorso": 6,
+        "dx": 5.309523809523807,
+        "cx": 28.476190476190474
+      }
+    },
+    {
+      "sheet": "showcase/resources/Idle/Player Idle 48x48.png",
+      "frame": 8,
+      "green": {
+        "insideTorso": 7,
+        "dx": -5.600000000000001,
+        "cx": 17.566666666666666
+      },
+      "magenta": {
+        "insideTorso": 6,
+        "dx": 5.309523809523807,
+        "cx": 28.476190476190474
+      }
+    },
+    {
+      "sheet": "showcase/resources/Idle/Player Idle 48x48.png",
+      "frame": 9,
+      "green": {
+        "insideTorso": 7,
+        "dx": -5.600000000000001,
+        "cx": 17.566666666666666
+      },
+      "magenta": {
+        "insideTorso": 6,
+        "dx": 5.309523809523807,
+        "cx": 28.476190476190474
+      }
+    },
+    {
+      "sheet": "showcase/resources/Walk/PlayerWalk 48x48.png",
+      "frame": 0,
+      "green": {
+        "insideTorso": 25,
+        "dx": -1.7836134453781511,
+        "cx": 21.323529411764707
+      },
+      "magenta": {
+        "insideTorso": 7,
+        "dx": 2.7053571428571423,
+        "cx": 25.8125
+      }
+    },
+    {
+      "sheet": "showcase/resources/Walk/PlayerWalk 48x48.png",
+      "frame": 1,
+      "green": {
+        "insideTorso": 24,
+        "dx": 3.424710424710426,
+        "cx": 25.857142857142858
+      },
+      "magenta": {
+        "insideTorso": 1,
+        "dx": -3.614250614250615,
+        "cx": 18.818181818181817
+      }
+    },
+    {
+      "sheet": "showcase/resources/Walk/PlayerWalk 48x48.png",
+      "frame": 2,
+      "green": {
+        "insideTorso": 20,
+        "dx": 5.0966216216216225,
+        "cx": 27.62162162162162
+      },
+      "magenta": {
+        "insideTorso": 3,
+        "dx": -4.568478260869565,
+        "cx": 17.956521739130434
+      }
+    },
+    {
+      "sheet": "showcase/resources/Walk/PlayerWalk 48x48.png",
+      "frame": 3,
+      "green": {
+        "insideTorso": 24,
+        "dx": 3.9459459459459474,
+        "cx": 27.37837837837838
+      },
+      "magenta": {
+        "insideTorso": 3,
+        "dx": -5.240124740124738,
+        "cx": 18.192307692307693
+      }
+    },
+    {
+      "sheet": "showcase/resources/Walk/PlayerWalk 48x48.png",
+      "frame": 4,
+      "green": {
+        "insideTorso": 25,
+        "dx": 2.1428571428571423,
+        "cx": 24.5
+      },
+      "magenta": {
+        "insideTorso": 0,
+        "adjacent": 0,
+        "dx": null,
+        "cx": null
+      }
+    },
+    {
+      "sheet": "showcase/resources/Walk/PlayerWalk 48x48.png",
+      "frame": 5,
+      "green": {
+        "insideTorso": 25,
+        "dx": -2.736516357206014,
+        "cx": 21.435897435897434
+      },
+      "magenta": {
+        "insideTorso": 7,
+        "dx": 3.2650862068965516,
+        "cx": 27.4375
+      }
+    },
+    {
+      "sheet": "showcase/resources/Walk/PlayerWalk 48x48.png",
+      "frame": 6,
+      "green": {
+        "insideTorso": 14,
+        "dx": -4.7365853658536565,
+        "cx": 18.8
+      },
+      "magenta": {
+        "insideTorso": 6,
+        "dx": 5.423414634146344,
+        "cx": 28.96
+      }
+    },
+    {
+      "sheet": "showcase/resources/Walk/PlayerWalk 48x48.png",
+      "frame": 7,
+      "green": {
+        "insideTorso": 14,
+        "dx": -5.289803220035779,
+        "cx": 19.384615384615383
+      },
+      "magenta": {
+        "insideTorso": 4,
+        "dx": 6.03391472868217,
+        "cx": 30.708333333333332
+      }
+    },
+    {
+      "sheet": "showcase/resources/Run/player run 48x48.png",
+      "frame": 0,
+      "green": {
+        "insideTorso": 20,
+        "dx": 3.5006587615283244,
+        "cx": 26.848484848484848
+      },
+      "magenta": {
+        "insideTorso": 7,
+        "dx": -5.826086956521742,
+        "cx": 17.52173913043478
+      }
+    },
+    {
+      "sheet": "showcase/resources/Run/player run 48x48.png",
+      "frame": 1,
+      "green": {
+        "insideTorso": 28,
+        "dx": -3.197222222222223,
+        "cx": 20.77777777777778
+      },
+      "magenta": {
+        "insideTorso": 7,
+        "dx": 2.1361111111111093,
+        "cx": 26.11111111111111
+      }
+    },
+    {
+      "sheet": "showcase/resources/Run/player run 48x48.png",
+      "frame": 2,
+      "green": {
+        "insideTorso": 7,
+        "dx": -6.429677419354839,
+        "cx": 16.29032258064516
+      },
+      "magenta": {
+        "insideTorso": 0,
+        "dx": 6.86823529411765,
+        "cx": 29.58823529411765
+      }
+    },
+    {
+      "sheet": "showcase/resources/Run/player run 48x48.png",
+      "frame": 3,
+      "green": {
+        "insideTorso": 8,
+        "dx": -6.479166666666668,
+        "cx": 17.1875
+      },
+      "magenta": {
+        "insideTorso": 0,
+        "dx": 8.833333333333332,
+        "cx": 32.5
+      }
+    },
+    {
+      "sheet": "showcase/resources/Run/player run 48x48.png",
+      "frame": 4,
+      "green": {
+        "insideTorso": 9,
+        "dx": -7.013392857142858,
+        "cx": 16.46875
+      },
+      "magenta": {
+        "insideTorso": 0,
+        "dx": 6.795634920634921,
+        "cx": 30.27777777777778
+      }
+    },
+    {
+      "sheet": "showcase/resources/Run/player run 48x48.png",
+      "frame": 5,
+      "green": {
+        "insideTorso": 12,
+        "dx": -4.623976608187135,
+        "cx": 19.13157894736842
+      },
+      "magenta": {
+        "insideTorso": 2,
+        "dx": -1.2555555555555564,
+        "cx": 22.5
+      }
+    }
+  ]
+}

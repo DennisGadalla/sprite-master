@@ -1,0 +1,14 @@
+node_modules/
+test-results/
+playwright-report/
+qa_screenshots/
+.chrome-*/
+.edge-*/
+__pycache__/
+*.pyc
+.DS_Store
+showcase/original_resource/
+showcase/resources/
+*.log
+*.err.log
+*.out.log

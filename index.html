@@ -1,0 +1,483 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Spritemaster Resource Generator</title>
+  <link rel="stylesheet" href="./src/styles/app.css">
+</head>
+<body>
+  <div id="welcomeOverlay" class="welcome-overlay">
+    <section class="welcome-card">
+      <div>
+        <h1>Spritemaster</h1>
+        <p>Load a saved generator state or create a new experimental rig.</p>
+      </div>
+      <div class="welcome-actions">
+        <button id="welcomeLoadBtn" type="button">Load Settings</button>
+        <button id="welcomeCreateBtn" class="primary" type="button">Create New</button>
+      </div>
+    </section>
+  </div>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand" aria-label="Spritemaster">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>Spritemaster</span>
+      </div>
+
+      <div class="top-controls" aria-label="Main controls">
+        <select id="animationSelect" aria-label="Source animation"></select>
+        <select id="viewMode" aria-label="View mode">
+          <option value="frame-sheet">Frame + Sheet</option>
+          <option value="sheet">Sheet Overview</option>
+          <option value="atlas">All Animations</option>
+        </select>
+        <select id="displayMode" aria-label="Display mode">
+          <option value="material">Material render</option>
+          <option value="source">Source rig</option>
+          <option value="role-mask">Role mask</option>
+          <option value="contour">Contour mono</option>
+        </select>
+        <select id="backgroundMode" aria-label="Preview background">
+          <option value="tiles">Tiles</option>
+          <option value="white">White</option>
+          <option value="black">Black</option>
+        </select>
+      </div>
+
+      <div class="transport" aria-label="Playback controls">
+        <button id="prevFrameBtn" aria-label="Previous frame">Prev</button>
+        <button id="playBtn" class="primary">Play</button>
+        <button id="nextFrameBtn" aria-label="Next frame">Next</button>
+      </div>
+
+      <div class="zoom-controls" aria-label="Zoom controls">
+        <select id="zoomTargetSelect" aria-label="Zoom target">
+          <option value="frame">Frame</option>
+          <option value="sheet">Sheet</option>
+          <option value="atlas">Atlas</option>
+        </select>
+        <button id="zoomOutBtn" aria-label="Zoom out">-</button>
+        <span id="zoomLevelText" class="status-pill">300%</span>
+        <button id="zoomInBtn" aria-label="Zoom in">+</button>
+        <button id="zoomResetBtn">Reset</button>
+      </div>
+
+      <div class="top-actions">
+        <button id="importSettingsBtn">Import Settings</button>
+        <input id="settingsFileInput" class="hidden" type="file" accept="application/json,.json">
+        <button id="exportZipBtn" class="primary">Export ZIP</button>
+      </div>
+    </header>
+
+    <main class="workspace tool-workspace">
+      <section class="stage" aria-label="Generator output">
+        <div class="stage-head">
+          <div>
+            <h1>96x96 resource rig generator</h1>
+            <p id="stageSubtitle">Native source sheets are converted into a normalized animation rig. Scroll over a canvas to zoom.</p>
+          </div>
+          <div class="stage-actions">
+            <span class="status-pill" id="frameLabel">0 / 0</span>
+            <span class="status-pill" id="modeLabel">Material</span>
+            <span class="status-pill" id="boundsText">-</span>
+          </div>
+        </div>
+
+        <div class="stage-body" id="stageBody">
+          <section class="output-panel" id="framePanel">
+            <header>
+              <strong>Current Frame</strong>
+              <label class="inline-range">
+                <span>Frame</span>
+                <input id="frameSlider" type="range" min="0" max="0" value="0" aria-label="Frame">
+              </label>
+            </header>
+            <div class="canvas-wrap single-frame-wrap">
+              <canvas id="previewCanvas" width="96" height="96"></canvas>
+            </div>
+            <div class="frame-details" id="frameDetails">
+              <span>Animation <b id="currentAnimationText">-</b></span>
+              <span>Frame <b id="currentFrameText">-</b></span>
+              <label class="frame-duration-field">Time <input id="frameDurationInput" type="number" min="40" max="1000" step="10" value="130"> ms</label>
+            </div>
+          </section>
+
+          <section class="output-panel" id="sheetPanel">
+            <header>
+              <strong>Animation Sheet</strong>
+              <div class="sheet-tools">
+                <span id="sheetLabel">-</span>
+                <button id="favoriteAnimationBtn" class="icon-button star-button" type="button" aria-label="Favorite animation" title="Favorite animation">☆</button>
+              </div>
+            </header>
+            <div class="canvas-wrap sheet-wrap">
+              <canvas id="sheetCanvas" width="960" height="114"></canvas>
+            </div>
+          </section>
+
+          <section class="output-panel hidden" id="atlasPanel">
+            <header>
+              <strong>All Animations Overview</strong>
+              <span id="atlasLabel">-</span>
+            </header>
+            <div class="canvas-wrap sheet-wrap">
+              <canvas id="atlasCanvas" width="960" height="960"></canvas>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <aside class="control-dock" aria-label="Generator controls">
+        <section class="panel">
+          <h2>Source</h2>
+          <div class="panel-body meta-grid">
+            <div class="resource-stat"><span>Cell</span><b id="cellSizeText">-</b></div>
+            <div class="resource-stat"><span>Output</span><b id="outputCanvasText">96x96</b></div>
+            <div class="resource-stat"><span>Frames</span><b id="frameCountText">-</b></div>
+            <div class="resource-stat"><span>Sheet</span><b id="sheetSizeText">-</b></div>
+            <div class="resource-stat full"><span>File</span><code id="sourcePathText">-</code></div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <h2>Modules</h2>
+          <div class="panel-body">
+            <label class="toggle-line"><input id="distalRoleMerge" type="checkbox">Treat hands and feet as limbs</label>
+            <div class="toggle-grid">
+              <label><input data-role-enabled="head" type="checkbox" checked>Head</label>
+              <label><input data-role-enabled="torso" type="checkbox" checked>Torso</label>
+              <label><input data-role-enabled="front_arm" type="checkbox" checked>Front arm</label>
+              <label><input data-role-enabled="hand_front" type="checkbox" checked>Front hand</label>
+              <label><input data-role-enabled="back_arm" type="checkbox" checked>Back arm</label>
+              <label><input data-role-enabled="hand_back" type="checkbox" checked>Back hand</label>
+              <label><input data-role-enabled="front_leg" type="checkbox" checked>Front leg</label>
+              <label><input data-role-enabled="foot_front" type="checkbox" checked>Front foot</label>
+              <label><input data-role-enabled="back_leg" type="checkbox" checked>Back leg</label>
+              <label><input data-role-enabled="foot_back" type="checkbox" checked>Back foot</label>
+              <label><input data-role-enabled="weapon" type="checkbox" checked>Weapon</label>
+              <label><input data-role-enabled="smear" type="checkbox" checked>Smear</label>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <h2>Proportions</h2>
+          <div class="panel-body compact-controls two-col">
+            <div class="control-subhead wide-action">Head</div>
+            <label class="slider-field">
+              <label>Head size <b id="headSizeValue">1.00x</b></label>
+              <input data-setting="roles.head.size" data-value="headSizeValue" type="range" min="0.75" max="1.35" step="0.01" value="1">
+            </label>
+
+            <div class="control-subhead wide-action">Torso</div>
+            <label class="slider-field">
+              <label>Torso size <b id="torsoSizeValue">1.00x</b></label>
+              <input data-setting="roles.torso.size" data-value="torsoSizeValue" type="range" min="0.75" max="1.35" step="0.01" value="1">
+            </label>
+            <label class="slider-field">
+              <label>Torso length <b id="torsoLengthValue">1.00x</b></label>
+              <input data-setting="roles.torso.length" data-value="torsoLengthValue" type="range" min="0.65" max="1.65" step="0.01" value="1">
+            </label>
+
+            <div class="control-subhead wide-action">Arms</div>
+            <label class="slider-field">
+              <label>Front arm length <b id="frontArmLengthValue">1.00x</b></label>
+              <input data-setting="roles.front_arm.length" data-value="frontArmLengthValue" type="range" min="0.55" max="1.75" step="0.01" value="1">
+            </label>
+            <label class="slider-field">
+              <label>Front arm thickness <b id="frontArmThicknessValue">1.00x</b></label>
+              <input data-setting="roles.front_arm.thickness" data-value="frontArmThicknessValue" type="range" min="0.55" max="2.25" step="0.01" value="1">
+            </label>
+            <label class="slider-field">
+              <label>Back arm length <b id="backArmLengthValue">1.00x</b></label>
+              <input data-setting="roles.back_arm.length" data-value="backArmLengthValue" type="range" min="0.55" max="1.75" step="0.01" value="1">
+            </label>
+            <label class="slider-field">
+              <label>Back arm thickness <b id="backArmThicknessValue">1.00x</b></label>
+              <input data-setting="roles.back_arm.thickness" data-value="backArmThicknessValue" type="range" min="0.55" max="2.25" step="0.01" value="1">
+            </label>
+            <label class="toggle-line"><input id="lockArmLength" type="checkbox" checked>Lock arm length</label>
+            <label class="toggle-line"><input id="lockArmThickness" type="checkbox" checked>Lock arm thickness</label>
+            <label class="slider-field">
+              <label>Hand size <b id="handSizeValue">1.00x</b></label>
+              <input id="handSize" data-setting="roles.hand_front.size" data-linked-roles="hand_front,hand_back" data-linked-key="size" data-value="handSizeValue" type="range" min="0.55" max="1.65" step="0.01" value="1">
+            </label>
+
+            <div class="control-subhead wide-action">Legs</div>
+            <label class="slider-field">
+              <label>Front leg length <b id="frontLegLengthValue">1.00x</b></label>
+              <input data-setting="roles.front_leg.length" data-value="frontLegLengthValue" type="range" min="0.55" max="1.75" step="0.01" value="1">
+            </label>
+            <label class="slider-field">
+              <label>Front leg thickness <b id="frontLegThicknessValue">1.00x</b></label>
+              <input data-setting="roles.front_leg.thickness" data-value="frontLegThicknessValue" type="range" min="0.55" max="2.25" step="0.01" value="1">
+            </label>
+            <label class="slider-field">
+              <label>Back leg length <b id="backLegLengthValue">1.00x</b></label>
+              <input data-setting="roles.back_leg.length" data-value="backLegLengthValue" type="range" min="0.55" max="1.75" step="0.01" value="1">
+            </label>
+            <label class="slider-field">
+              <label>Back leg thickness <b id="backLegThicknessValue">1.00x</b></label>
+              <input data-setting="roles.back_leg.thickness" data-value="backLegThicknessValue" type="range" min="0.55" max="2.25" step="0.01" value="1">
+            </label>
+            <label class="toggle-line"><input id="lockLegLength" type="checkbox" checked>Lock leg length</label>
+            <label class="toggle-line"><input id="lockLegThickness" type="checkbox" checked>Lock leg thickness</label>
+            <label class="slider-field">
+              <label>Foot size <b id="footSizeValue">1.00x</b></label>
+              <input id="footSize" data-setting="roles.foot_front.size" data-linked-roles="foot_front,foot_back" data-linked-key="size" data-value="footSizeValue" type="range" min="0.55" max="1.65" step="0.01" value="1">
+            </label>
+
+            <div class="control-subhead wide-action">Misc</div>
+            <label class="slider-field">
+              <label>Scale X <b id="figureScaleXValue">100%</b></label>
+              <input id="figureScaleX" data-setting="figureScale.x" data-value="figureScaleXValue" type="range" min="0.05" max="2" step="0.01" value="1">
+            </label>
+            <label class="slider-field">
+              <label>Scale Y <b id="figureScaleYValue">100%</b></label>
+              <input id="figureScaleY" data-setting="figureScale.y" data-value="figureScaleYValue" type="range" min="0.05" max="2" step="0.01" value="1">
+            </label>
+            <label class="toggle-line wide-action"><input id="figureScaleLock" type="checkbox" checked>Lock figure scale axes</label>
+            <label class="slider-field">
+              <label>Weapon length <b id="weaponLengthValue">1.00x</b></label>
+              <input data-setting="roles.weapon.length" data-value="weaponLengthValue" type="range" min="0.50" max="2.50" step="0.01" value="1">
+            </label>
+            <label class="slider-field">
+              <label>Weapon thickness <b id="weaponThicknessValue">1.00x</b></label>
+              <input data-setting="roles.weapon.thickness" data-value="weaponThicknessValue" type="range" min="0.55" max="2.25" step="0.01" value="1">
+            </label>
+            <label class="slider-field">
+              <label>Smear length <b id="smearLengthValue">1.00x</b></label>
+              <input data-setting="roles.smear.length" data-value="smearLengthValue" type="range" min="0.50" max="2.50" step="0.01" value="1">
+            </label>
+            <label class="slider-field">
+              <label>Smear thickness <b id="smearThicknessValue">1.00x</b></label>
+              <input data-setting="roles.smear.thickness" data-value="smearThicknessValue" type="range" min="0.55" max="2.25" step="0.01" value="1">
+            </label>
+            <button id="resetProportionsBtn" class="wide-action" type="button">Reset Standard Proportions</button>
+          </div>
+        </section>
+
+        <section class="panel">
+          <h2>Accessories</h2>
+          <div class="panel-body compact-controls two-col">
+            <label class="field">
+              <span>Eyes</span>
+              <select id="eyesAccessory">
+                <option value="none">None</option>
+                <option value="dot">Dot</option>
+                <option value="bright">Bright</option>
+                <option value="line">Line</option>
+                <option value="glow">Glow</option>
+                <option value="sleepy">Sleepy</option>
+                <option value="wide">Wide</option>
+                <option value="visor">Visor</option>
+                <option value="dual">Dual</option>
+                <option value="hollow">Hollow</option>
+              </select>
+            </label>
+          </div>
+        </section>
+
+        <section class="panel">
+          <h2>Material</h2>
+          <div class="panel-body">
+            <label class="field">
+              <span>Palette</span>
+              <select id="paletteSelect"></select>
+            </label>
+            <div id="palettePreview" class="palette-preview"></div>
+            <label class="toggle-line"><input id="colorTuneEnabled" type="checkbox">Fine tune module colors</label>
+            <div id="colorTuneControls" class="color-tune-grid hidden">
+              <label><span>Head</span><input data-color-role="head" type="color"></label>
+              <label><span>Torso</span><input data-color-role="torso" type="color"></label>
+              <label><span>Front arm</span><input data-color-role="front_arm" type="color"></label>
+              <label><span>Front hand</span><input data-color-role="hand_front" type="color"></label>
+              <label><span>Back arm</span><input data-color-role="back_arm" type="color"></label>
+              <label><span>Back hand</span><input data-color-role="hand_back" type="color"></label>
+              <label><span>Front leg</span><input data-color-role="front_leg" type="color"></label>
+              <label><span>Front foot</span><input data-color-role="foot_front" type="color"></label>
+              <label><span>Back leg</span><input data-color-role="back_leg" type="color"></label>
+              <label><span>Back foot</span><input data-color-role="foot_back" type="color"></label>
+              <label><span>Weapon</span><input data-color-role="weapon" type="color"></label>
+              <label><span>Smear</span><input data-color-role="smear" type="color"></label>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <h2>Outline</h2>
+          <div class="panel-body compact-controls two-col">
+            <label class="field">
+              <span>Mode</span>
+              <select id="outlineMode">
+                <option value="off">Off</option>
+                <option value="silhouette">Silhouette</option>
+                <option value="limbs">Limbs</option>
+                <option value="modules">Modules</option>
+                <option value="separation">Separation</option>
+              </select>
+            </label>
+            <label class="toggle-line"><input id="outlinePixelPerfect" type="checkbox">Pixel-perfect</label>
+            <label class="field">
+              <span>Color</span>
+              <select id="outlineColor">
+                <option value="palette">Palette dark</option>
+                <option value="black">Black</option>
+                <option value="cool">Cool shadow</option>
+              </select>
+            </label>
+            <label class="slider-field">
+              <label>Thickness <b id="outlineThicknessValue">1px</b></label>
+              <input id="outlineThickness" type="range" min="1" max="2" step="1" value="1">
+            </label>
+            <div class="toggle-grid single">
+              <label><input data-outline-target="head" type="checkbox" checked>Head</label>
+              <label><input data-outline-target="torso" type="checkbox" checked>Torso</label>
+              <label><input data-outline-target="front_arm" type="checkbox" checked>Front arm</label>
+              <label><input data-outline-target="hand_front" type="checkbox" checked>Front hand</label>
+              <label><input data-outline-target="back_arm" type="checkbox" checked>Back arm</label>
+              <label><input data-outline-target="hand_back" type="checkbox" checked>Back hand</label>
+              <label><input data-outline-target="front_leg" type="checkbox" checked>Front leg</label>
+              <label><input data-outline-target="foot_front" type="checkbox" checked>Front foot</label>
+              <label><input data-outline-target="back_leg" type="checkbox" checked>Back leg</label>
+              <label><input data-outline-target="foot_back" type="checkbox" checked>Back foot</label>
+              <label><input data-outline-target="weapon" type="checkbox">Weapon</label>
+              <label><input data-outline-target="smear" type="checkbox">Smear</label>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <h2>Lighting</h2>
+          <div class="panel-body compact-controls two-col">
+            <label class="field">
+              <span>Mode</span>
+              <select id="shadingMode">
+                <option value="off">Off</option>
+                <option value="banded">Banded</option>
+                <option value="soft">Soft</option>
+                <option value="toon-ao">Toon AO</option>
+                <option value="depth">Depth bias</option>
+              </select>
+            </label>
+            <label class="toggle-line"><input id="ambientOcclusion" type="checkbox" checked>Ambient occlusion</label>
+            <label class="slider-field">
+              <label>Strength <b id="shadingStrengthValue">45%</b></label>
+              <input id="shadingStrength" type="range" min="0" max="200" step="5" value="45">
+            </label>
+            <label class="slider-field">
+              <label>Direction <b id="lightDirectionValue">-135 deg</b></label>
+              <input id="lightDirection" type="range" min="-180" max="180" step="15" value="-135">
+            </label>
+            <label class="slider-field">
+              <label>Rear depth <b id="rearDepthValue">20%</b></label>
+              <input id="rearDepth" type="range" min="0" max="70" step="5" value="20">
+            </label>
+            <label class="slider-field">
+              <label>Rim light <b id="rimLightValue">8%</b></label>
+              <input id="rimLight" type="range" min="0" max="60" step="4" value="8">
+            </label>
+          </div>
+        </section>
+
+        <section class="panel">
+          <h2>Frame</h2>
+          <div class="panel-body">
+            <label class="toggle-line"><input id="skeletonOverlay" type="checkbox">Overlay skeleton</label>
+            <label class="toggle-line"><input id="anchorBottom" type="checkbox">Anchor frames to bottom</label>
+            <label class="field">
+              <span>Sub-grid</span>
+              <select id="subGridMode">
+                <option value="off">Off</option>
+                <option value="32">32x32</option>
+                <option value="48">48x48</option>
+                <option value="custom">Custom</option>
+              </select>
+            </label>
+            <label class="field" id="subGridCustomField">
+              <span>Grid size</span>
+              <input id="subGridCustomSize" type="number" min="2" max="96" step="1" value="16">
+            </label>
+          </div>
+        </section>
+
+        <section class="panel beta-panel">
+          <h2>Beta Lab</h2>
+          <div class="panel-body compact-controls two-col">
+            <label class="slider-field wide-action">
+              <label>Expression strength for current animation <b id="expressionStrengthValue">0%</b></label>
+              <input id="expressionStrength" type="range" min="-100" max="500" step="5" value="0">
+            </label>
+            <label class="field">
+              <span>Seed</span>
+              <input id="randomSeedInput" type="text" value="spritemaster">
+            </label>
+            <button id="applySeedBtn" type="button">Load Seed</button>
+            <button id="randomizeBtn" type="button" class="wide-action">Randomize Everything</button>
+            <label class="field">
+              <span>Head shape</span>
+              <select id="headShapeSelect">
+                <option value="standard">Standard</option>
+                <option value="narrow">Narrow</option>
+                <option value="wide">Wide</option>
+                <option value="tall">Tall</option>
+                <option value="flat">Flat</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>Limb / foot shape</span>
+              <select id="limbShapeSelect">
+                <option value="standard">Standard</option>
+                <option value="slim">Slim</option>
+                <option value="chunky">Chunky</option>
+                <option value="long-taper">Long taper</option>
+                <option value="flat-feet">Flat feet</option>
+              </select>
+            </label>
+          </div>
+        </section>
+
+      </aside>
+    </main>
+  </div>
+
+  <div id="exportDialog" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="exportDialogTitle">
+    <section class="modal-card export-modal">
+      <header class="modal-head">
+        <div>
+          <h2 id="exportDialogTitle">Export ZIP</h2>
+          <p>Exports material render, source rig, role mask, and mono contour sheets.</p>
+        </div>
+        <button id="exportCloseBtn" type="button" aria-label="Close export dialog">Close</button>
+      </header>
+      <div class="export-modal-body">
+        <section class="export-preview">
+          <div class="export-preview-head">
+            <strong>Preview</strong>
+            <button id="exportPreviewPlayBtn" type="button">Play Preview</button>
+          </div>
+          <span id="exportPreviewLabel">-</span>
+          <div class="export-preview-scroll">
+            <canvas id="exportPreviewCanvas" width="960" height="384"></canvas>
+          </div>
+        </section>
+        <section class="export-picker">
+          <div class="mini-actions">
+            <button id="exportStandardBtn" type="button">Standard</button>
+            <button id="exportFavoritesBtn" type="button">Favorites</button>
+            <button id="exportAllBtn" type="button">Set All</button>
+            <button id="exportNoneBtn" type="button">Clear</button>
+          </div>
+          <div class="summary-row"><span>Selected</span><b id="exportSelectionText">-</b></div>
+          <div id="exportAnimationList" class="export-list" aria-label="Export animations"></div>
+          <button id="exportDownloadBtn" class="primary" type="button">Download ZIP</button>
+        </section>
+      </div>
+    </section>
+  </div>
+
+  <script type="module" src="./src/ui/app.js"></script>
+</body>
+</html>
