@@ -285,12 +285,8 @@ function setupStandardMarkers() {
   els.settingInputs.forEach(input => {
     if (input.type !== "range") return;
     const standard = getNested(defaults, input.dataset.setting) ?? Number(input.defaultValue || input.value);
-    const min = Number(input.min);
-    const max = Number(input.max);
-    const position = max > min ? ((standard - min) / (max - min)) * 100 : 50;
     const wrapper = document.createElement("div");
     wrapper.className = "range-standard-wrap";
-    wrapper.style.setProperty("--standard-pos", `${clampPercent(position)}%`);
 
     const marker = document.createElement("button");
     marker.className = "standard-reset-btn";
@@ -299,15 +295,33 @@ function setupStandardMarkers() {
     marker.dataset.standardValue = String(standard);
     marker.title = `Reset to standard ${Number(standard).toFixed(2)}x`;
     marker.setAttribute("aria-label", `Reset ${input.dataset.setting} to standard`);
-    marker.textContent = "↺";
+    marker.textContent = "\u21ba";
     marker.addEventListener("click", event => {
       event.preventDefault();
       event.stopPropagation();
       resetSettingInputToStandard(input);
     });
 
+    const header = input.closest(".slider-field")?.querySelector(":scope > label");
+    const valueNode = header?.querySelector("b");
+    const textNode = header
+      ? [...header.childNodes].find(node => node.nodeType === Node.TEXT_NODE && node.textContent.trim())
+      : null;
+    if (header && valueNode && textNode) {
+      const labelGroup = document.createElement("span");
+      labelGroup.className = "slider-label-main";
+      const labelText = document.createElement("span");
+      labelText.className = "slider-label-text";
+      labelText.textContent = textNode.textContent.trim();
+      labelGroup.append(labelText, marker);
+      textNode.remove();
+      header.insertBefore(labelGroup, valueNode);
+    } else {
+      wrapper.append(marker);
+    }
+
     input.parentNode.insertBefore(wrapper, input);
-    wrapper.append(marker, input);
+    wrapper.append(input);
   });
 }
 

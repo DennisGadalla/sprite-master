@@ -9,6 +9,21 @@ test("proportion slider standard buttons reset individual controls", async ({ pa
   const ranges = page.locator("[data-setting][type='range']");
   await expect(page.locator(".standard-marker")).toHaveCount(0);
   await expect(page.locator("[data-standard-reset]")).toHaveCount(await ranges.count());
+  await expect(page.locator("[data-standard-reset='roles.front_arm.length']").locator("xpath=ancestor::*[contains(@class, 'slider-label-main')][1]")).toBeVisible();
+  await expect(page.locator("[data-setting='roles.front_arm.length']").locator("xpath=preceding-sibling::*[contains(@class, 'standard-reset-btn')]")).toHaveCount(0);
+  const placement = await page.locator("[data-standard-reset='roles.front_arm.length']").evaluate(button => {
+    const slider = document.querySelector("[data-setting='roles.front_arm.length']");
+    const buttonRect = button.getBoundingClientRect();
+    const sliderRect = slider.getBoundingClientRect();
+    return {
+      buttonRight: buttonRect.right,
+      sliderTop: sliderRect.top,
+      buttonBottom: buttonRect.bottom,
+      position: getComputedStyle(button).position
+    };
+  });
+  expect(placement.position).toBe("static");
+  expect(placement.buttonBottom).toBeLessThanOrEqual(placement.sliderTop);
 
   await setRange(page, "[data-setting='roles.front_arm.length']", "1.5");
   await expect(page.locator("#frontArmLengthValue")).toHaveText("1.50x");
