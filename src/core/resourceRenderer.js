@@ -1935,16 +1935,10 @@ function applyPixelPerfectOutline(colors, composed, settings, output) {
     }
   }
 
-  const keep = [];
   for (const [index, role] of candidates.entries()) {
     const x = index % output.width;
     const y = (index / output.width) | 0;
     if (countRoleNeighbors(roleAt, output, x, y, 4) === 0) continue;
-    if (createsOutlineDoubleBlock(candidates, roleAt, output, x, y)) continue;
-    keep.push([index, role]);
-  }
-
-  keep.forEach(([index, role]) => {
     const outline = outlineColor(role, settings, outlineConfig(role, settings).color);
     const offset = index * 4;
     colors.imageData.data[offset] = outline.r;
@@ -1952,7 +1946,7 @@ function applyPixelPerfectOutline(colors, composed, settings, output) {
     colors.imageData.data[offset + 2] = outline.b;
     colors.imageData.data[offset + 3] = 255;
     colors.colorAt[index] = rgbToHex(outline.r, outline.g, outline.b);
-  });
+  }
 }
 
 function cleanupExternalOutlineOrphans(colors, composed, output) {
@@ -1989,26 +1983,6 @@ function clearOutlinePixel(colors, index) {
   colors.imageData.data[offset + 2] = 0;
   colors.imageData.data[offset + 3] = 0;
   colors.colorAt[index] = null;
-}
-
-function createsOutlineDoubleBlock(candidates, roleAt, output, x, y) {
-  const index = y * output.width + x;
-  const corners = [
-    [[0, 0], [-1, 0], [0, -1], [-1, -1]],
-    [[0, 0], [1, 0], [0, -1], [1, -1]],
-    [[0, 0], [-1, 0], [0, 1], [-1, 1]],
-    [[0, 0], [1, 0], [0, 1], [1, 1]]
-  ];
-  return corners.some(block => {
-    const cells = block.map(([ox, oy]) => ({ x: x + ox, y: y + oy }));
-    if (cells.some(cell => !inside(cell.x, cell.y, output))) return false;
-    const outlineCount = cells.filter(cell => {
-      const cellIndex = cell.y * output.width + cell.x;
-      return cellIndex === index || candidates.has(cellIndex);
-    }).length;
-    const baseCount = cells.filter(cell => roleAt[cell.y * output.width + cell.x]).length;
-    return outlineCount >= 3 && baseCount === 0;
-  });
 }
 
 function applyFrameAnchor(colors, settings, output, bounds) {

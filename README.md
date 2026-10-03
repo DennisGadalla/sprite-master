@@ -35,7 +35,7 @@ http://127.0.0.1:8000
 To use a different port in PowerShell:
 
 ```powershell
-$env:PORT=8010; npm start
+$env:PORT=8001; npm start
 ```
 
 The equivalent command without npm is:
